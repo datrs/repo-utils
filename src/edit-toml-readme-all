@@ -9,11 +9,13 @@ dirs="$dirname/../../*"
 for f in $dirs; do
   pushd "$f" > /dev/null
     if [ -f Cargo.toml ]; then
-      echo 'has cargo.toml'
-      vim Cargo.toml
-      git add -A
-      git commit -am 'Add .readme field to Cargo.toml'
-      cpv patch
+      count="$(grep readme < Cargo.toml | wc -c)"
+      if [ $count = 0 ]; then
+        vim Cargo.toml
+        git add -A
+        git commit -am 'Add .readme field to Cargo.toml'
+        cpv patch
+      fi
     fi
   popd > /dev/null
 done
