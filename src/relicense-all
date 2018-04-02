@@ -1,0 +1,10 @@
+#!/bin/sh
+
+for f in *; do
+  pushd "$f"
+  relicense
+  git add -A
+  git commit --amend --no-edit
+  git push -f
+  popd
+done

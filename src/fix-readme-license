@@ -1,0 +1,11 @@
+#!/bin/sh
+
+for f in *; do
+  pushd "$f"
+  sed -i 's|./MIT|./LICENSE-MIT|' README.md
+  sed -i 's|./APACHE|./LICENSE-APACHE|' README.md
+  git add -A
+  git commit --amend --no-edit
+  git push -f
+  popd
+done

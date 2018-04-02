@@ -1,0 +1,51 @@
+#!/bin/bash
+
+readf () {
+  file="$(readlink -f "$1")"
+  cat "$file"
+}
+
+replace () {
+  sed "s|{{$1}}|$2|g"
+}
+
+copy () {
+  echo "[copy] $1 -> $2" >&2
+  cp "$1" "$2"
+}
+
+to_camel_case () {
+  sed 's/[_|-]\([a-z]\)/\U\1/g;s/^\([a-z]\)/\1/g'
+}
+
+base="/home/anon/Code/yw/templates/project-base"
+readme_src="\[Apache-2.0](./LICENSE)"
+readme_dst="[MIT](./MIT) OR [Apache-2.0](./APACHE)"
+
+pwd
+
+echo '[rm] LICENSE'
+rm -f LICENSE
+
+echo '[copy] LICENSE-APACHE'
+readf "$base/LICENSE-APACHE" \
+  | replace YEAR "$(date +%Y)" \
+  | replace NAME "Yoshua Wuyts" \
+  > LICENSE-APACHE
+
+echo '[copy] LICENSE-MIT'
+readf "$base/LICENSE-MIT" \
+  | replace YEAR "$(date +%Y)" \
+  | replace NAME "Yoshua Wuyts" \
+  > LICENSE-MIT
+
+echo '[edit] README.md'
+sed -i "s|$readme_src|$readme_dst|" README.md
+
+echo '[edit] Cargo.toml'
+sed -i 's|"Apache-2.0"|"MIT OR Apache-2.0"|' Cargo.toml
+
+echo '[commit]'
+git add -A
+git commit -m 'Relicense to MIT OR Apache-2.0' || exit 0
+git push
