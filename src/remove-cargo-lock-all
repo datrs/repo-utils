@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Run this from datrs project root, e.g.
+# $ ./repo-utils/src/remove-cargo-lock-all
+
+for f in *; do
+  if [ "$f" != "website" ] && [ "$f" != "repo-utils" ]; then
+    pushd "$f"
+    ../repo-utils/src/remove-cargo-lock
+    popd
+  fi
+done

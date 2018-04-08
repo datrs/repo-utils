@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Run this script inside the repo you are removing Cargo.lock from
+
+count="$(grep Cargo.lock < .gitignore | wc -c)"
+if [ $count != 0 ]; then
+  echo '[bail] Already ignoring Cargo.lock'
+  exit 0
+fi
+
+echo '[rm] Cargo.lock'
+git rm -f Cargo.lock
+
+echo '[ignore] Cargo.lock'
+echo 'Cargo.lock' >> .gitignore
+
+echo '[commit]'
+git add -A
+git commit -m 'Remove and ignore Cargo.lock' || exit 0
+git push
