@@ -1,0 +1,33 @@
+#!/bin/bash
+
+set -x
+
+dirname="$(dirname "$(readlink -f "$0")")"
+
+file=".travis.yml"
+from="--write-mode=diff"
+to="--check"
+
+replace () {
+  dir="$1"
+  pushd "$dir" > /dev/null
+    if [ -f $file ]; then
+      target="$dir/$file"
+      grep -- "$from" < "$target"
+      if [ $? -eq 0 ]; then
+        sed -i "s/$from/$to/" "$target"
+        git add -A
+        git commit -m 'fix rustfmt in travis.yml'
+        git push || continue
+      fi
+    fi
+  popd > /dev/null
+}
+
+# Replace one, uncomment for testing only.
+# replace "$dirname/../../sparse-bitfield"
+
+dirs="$dirname/../../*"
+for dir in $dirs; do
+  replace "$dir"
+done
