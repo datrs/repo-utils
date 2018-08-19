@@ -1,0 +1,12 @@
+#!/bin/sh
+
+dirname="$(dirname "$(readlink -f "$0")")"
+
+dirs="$dirname/../../*"
+for f in $dirs; do
+  pushd "$f" > /dev/null
+  github-templates
+  git add -A
+  git commit -am 'Update .github'
+  popd > /dev/null
+done
