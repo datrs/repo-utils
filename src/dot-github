@@ -8,5 +8,6 @@ for f in $dirs; do
   github-templates
   git add -A
   git commit -am 'Update .github'
+  git push
   popd > /dev/null
 done
