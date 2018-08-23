@@ -1,0 +1,22 @@
+#!/bin/bash
+dirname="$(dirname "$(readlink -f "$0")")"
+
+branches() {
+  dirs="$dirname/../../*"
+  for f in $dirs; do
+  pushd "$f" > /dev/null
+    curr_branch="$(git branch | grep '*' | sed 's/^* //')"
+    echo "$curr_branch" | grep '^master$' > /dev/null
+    if [ $? -ne 0 ]; then
+      dir="$(basename "$f")"
+      echo "$dir" "$curr_branch"
+    fi
+    popd > /dev/null
+  done
+}
+
+main() {
+  branches | column -t -N 'Repository,Branch'
+}
+
+main
